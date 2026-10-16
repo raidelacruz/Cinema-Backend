@@ -26,8 +26,8 @@ public class OpenApiConfig {
                                 .email("soporte@cinepolis-web.com"))
                         .license(new License().name("Apache 2.0").url("https://springdoc.org")))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080").description("Servidor de Desarrollo Local"),
-                        new Server().url("https://cinema-backend-production.up.railway.app").description("Servidor de Producción / Nube")
+                        new Server().url("https://cinema-backend-mzeg.onrender.com").description("Servidor de Producción / Render"),
+                        new Server().url("http://localhost:8080").description("Servidor de Desarrollo Local")
                 ));
     }
 }
