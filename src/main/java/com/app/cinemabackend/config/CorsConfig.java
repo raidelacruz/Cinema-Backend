@@ -8,6 +8,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class CorsConfig {
@@ -16,7 +17,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(Collections.singletonList("*")); // Permite Angular en localhost:4200 y dominios de despliegue
+        config.setAllowedOriginPatterns(List.of("")); // Permite Angular en localhost:4200 y dominios de despliegue
         config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setExposedHeaders(Arrays.asList("Authorization", "Content-Disposition"));
