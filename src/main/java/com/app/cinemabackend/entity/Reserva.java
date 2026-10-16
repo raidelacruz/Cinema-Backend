@@ -1,7 +1,8 @@
 package com.app.cinemabackend.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -11,9 +12,6 @@ import java.util.List;
 @Table(name = "reserva")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Reserva {
 
     @Id
@@ -53,6 +51,106 @@ public class Reserva {
     private OffsetDateTime fechaCreacion;
 
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private List<DetalleReserva> detalles = new ArrayList<>();
+
+    public Reserva() {
+    }
+
+    public Reserva(Long idReserva, String codigoReserva, String clienteNombre, String clienteEmail, FuncionHorario funcionHorario, BigDecimal total, String estado, String codigoQr, String codigoPickup, String metodoPago, OffsetDateTime fechaCreacion, List<DetalleReserva> detalles) {
+        this.idReserva = idReserva;
+        this.codigoReserva = codigoReserva;
+        this.clienteNombre = clienteNombre;
+        this.clienteEmail = clienteEmail;
+        this.funcionHorario = funcionHorario;
+        this.total = total;
+        this.estado = estado;
+        this.codigoQr = codigoQr;
+        this.codigoPickup = codigoPickup;
+        this.metodoPago = metodoPago;
+        this.fechaCreacion = fechaCreacion;
+        this.detalles = detalles != null ? detalles : new ArrayList<>();
+    }
+
+    public static ReservaBuilder builder() {
+        return new ReservaBuilder();
+    }
+
+    public static class ReservaBuilder {
+        private Long idReserva;
+        private String codigoReserva;
+        private String clienteNombre;
+        private String clienteEmail;
+        private FuncionHorario funcionHorario;
+        private BigDecimal total;
+        private String estado;
+        private String codigoQr;
+        private String codigoPickup;
+        private String metodoPago;
+        private OffsetDateTime fechaCreacion;
+        private List<DetalleReserva> detalles = new ArrayList<>();
+
+        public ReservaBuilder idReserva(Long idReserva) {
+            this.idReserva = idReserva;
+            return this;
+        }
+
+        public ReservaBuilder codigoReserva(String codigoReserva) {
+            this.codigoReserva = codigoReserva;
+            return this;
+        }
+
+        public ReservaBuilder clienteNombre(String clienteNombre) {
+            this.clienteNombre = clienteNombre;
+            return this;
+        }
+
+        public ReservaBuilder clienteEmail(String clienteEmail) {
+            this.clienteEmail = clienteEmail;
+            return this;
+        }
+
+        public ReservaBuilder funcionHorario(FuncionHorario funcionHorario) {
+            this.funcionHorario = funcionHorario;
+            return this;
+        }
+
+        public ReservaBuilder total(BigDecimal total) {
+            this.total = total;
+            return this;
+        }
+
+        public ReservaBuilder estado(String estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public ReservaBuilder codigoQr(String codigoQr) {
+            this.codigoQr = codigoQr;
+            return this;
+        }
+
+        public ReservaBuilder codigoPickup(String codigoPickup) {
+            this.codigoPickup = codigoPickup;
+            return this;
+        }
+
+        public ReservaBuilder metodoPago(String metodoPago) {
+            this.metodoPago = metodoPago;
+            return this;
+        }
+
+        public ReservaBuilder fechaCreacion(OffsetDateTime fechaCreacion) {
+            this.fechaCreacion = fechaCreacion;
+            return this;
+        }
+
+        public ReservaBuilder detalles(List<DetalleReserva> detalles) {
+            this.detalles = detalles;
+            return this;
+        }
+
+        public Reserva build() {
+            return new Reserva(idReserva, codigoReserva, clienteNombre, clienteEmail, funcionHorario, total, estado, codigoQr, codigoPickup, metodoPago, fechaCreacion, detalles);
+        }
+    }
 }

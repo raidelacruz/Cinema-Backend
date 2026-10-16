@@ -1,15 +1,13 @@
 package com.app.cinemabackend.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "pelicula")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Pelicula {
 
     @Id
@@ -37,4 +35,77 @@ public class Pelicula {
 
     @Column(name = "estado")
     private String estado;
+
+    public Pelicula() {
+    }
+
+    public Pelicula(Long idPelicula, String titulo, String sinopsis, Integer duracionMinutos, String clasificacion, String genero, String posterUrl, String estado) {
+        this.idPelicula = idPelicula;
+        this.titulo = titulo;
+        this.sinopsis = sinopsis;
+        this.duracionMinutos = duracionMinutos;
+        this.clasificacion = clasificacion;
+        this.genero = genero;
+        this.posterUrl = posterUrl;
+        this.estado = estado;
+    }
+
+    public static PeliculaBuilder builder() {
+        return new PeliculaBuilder();
+    }
+
+    public static class PeliculaBuilder {
+        private Long idPelicula;
+        private String titulo;
+        private String sinopsis;
+        private Integer duracionMinutos;
+        private String clasificacion;
+        private String genero;
+        private String posterUrl;
+        private String estado;
+
+        public PeliculaBuilder idPelicula(Long idPelicula) {
+            this.idPelicula = idPelicula;
+            return this;
+        }
+
+        public PeliculaBuilder titulo(String titulo) {
+            this.titulo = titulo;
+            return this;
+        }
+
+        public PeliculaBuilder sinopsis(String sinopsis) {
+            this.sinopsis = sinopsis;
+            return this;
+        }
+
+        public PeliculaBuilder duracionMinutos(Integer duracionMinutos) {
+            this.duracionMinutos = duracionMinutos;
+            return this;
+        }
+
+        public PeliculaBuilder clasificacion(String clasificacion) {
+            this.clasificacion = clasificacion;
+            return this;
+        }
+
+        public PeliculaBuilder genero(String genero) {
+            this.genero = genero;
+            return this;
+        }
+
+        public PeliculaBuilder posterUrl(String posterUrl) {
+            this.posterUrl = posterUrl;
+            return this;
+        }
+
+        public PeliculaBuilder estado(String estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public Pelicula build() {
+            return new Pelicula(idPelicula, titulo, sinopsis, duracionMinutos, clasificacion, genero, posterUrl, estado);
+        }
+    }
 }
