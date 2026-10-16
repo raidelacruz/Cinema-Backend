@@ -25,7 +25,7 @@ public class PeliculaServiceImpl implements PeliculaService {
     @Override
     public List<PeliculaDTO> obtenerCartelera() {
         try {
-            List<Pelicula> peliculas = peliculaRepository.findByEstadoIgnoreCase("ACTIVO");
+            List<Pelicula> peliculas = peliculaRepository.findPeliculasActivas();
             if (!peliculas.isEmpty()) {
                 return peliculas.stream().map(this::mapToDTO).collect(Collectors.toList());
             }
