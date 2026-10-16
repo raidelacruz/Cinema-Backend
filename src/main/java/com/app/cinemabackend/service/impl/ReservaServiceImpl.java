@@ -12,7 +12,6 @@ import com.app.cinemabackend.repository.*;
 import com.app.cinemabackend.service.DulceriaService;
 import com.app.cinemabackend.service.QRCodeService;
 import com.app.cinemabackend.service.ReservaService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ReservaServiceImpl implements ReservaService {
 
     private final FuncionHorarioRepository funcionHorarioRepository;
@@ -30,6 +28,18 @@ public class ReservaServiceImpl implements ReservaService {
     private final ReservaRepository reservaRepository;
     private final DulceriaService dulceriaService;
     private final QRCodeService qrCodeService;
+
+    public ReservaServiceImpl(FuncionHorarioRepository funcionHorarioRepository,
+                              FuncionButacaRepository funcionButacaRepository,
+                              ReservaRepository reservaRepository,
+                              DulceriaService dulceriaService,
+                              QRCodeService qrCodeService) {
+        this.funcionHorarioRepository = funcionHorarioRepository;
+        this.funcionButacaRepository = funcionButacaRepository;
+        this.reservaRepository = reservaRepository;
+        this.dulceriaService = dulceriaService;
+        this.qrCodeService = qrCodeService;
+    }
 
     @Override
     @Transactional

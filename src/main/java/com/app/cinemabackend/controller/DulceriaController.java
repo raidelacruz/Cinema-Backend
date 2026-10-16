@@ -5,7 +5,6 @@ import com.app.cinemabackend.dto.response.DulceriaDTO;
 import com.app.cinemabackend.service.DulceriaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +12,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/dulceria")
-@RequiredArgsConstructor
 @Tag(name = "Dulcería", description = "Endpoints para el catálogo de dulcería, combos y snacks (RF06)")
 public class DulceriaController {
 
     private final DulceriaService dulceriaService;
+
+    public DulceriaController(DulceriaService dulceriaService) {
+        this.dulceriaService = dulceriaService;
+    }
 
     @GetMapping
     @Operation(summary = "Obtener el catálogo completo de productos de confitería y combos")

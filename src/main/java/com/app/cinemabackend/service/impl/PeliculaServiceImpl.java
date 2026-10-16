@@ -6,7 +6,6 @@ import com.app.cinemabackend.entity.Pelicula;
 import com.app.cinemabackend.exception.ResourceNotFoundException;
 import com.app.cinemabackend.repository.PeliculaRepository;
 import com.app.cinemabackend.service.PeliculaService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +13,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class PeliculaServiceImpl implements PeliculaService {
 
     private final PeliculaRepository peliculaRepository;
+
+    public PeliculaServiceImpl(PeliculaRepository peliculaRepository) {
+        this.peliculaRepository = peliculaRepository;
+    }
 
     @Override
     @Transactional(readOnly = true)

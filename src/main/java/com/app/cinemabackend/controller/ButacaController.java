@@ -6,7 +6,6 @@ import com.app.cinemabackend.entity.Butaca;
 import com.app.cinemabackend.repository.ButacaRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +14,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/butacas")
-@RequiredArgsConstructor
 @Tag(name = "Butacas Físicas", description = "Endpoints para consultar la distribución física de asientos de una sala")
 public class ButacaController {
 
     private final ButacaRepository butacaRepository;
+
+    public ButacaController(ButacaRepository butacaRepository) {
+        this.butacaRepository = butacaRepository;
+    }
 
     @GetMapping("/sala/{idSala}")
     @Operation(summary = "Obtener el listado de butacas físicas de una sala ordenadas por fila y número")

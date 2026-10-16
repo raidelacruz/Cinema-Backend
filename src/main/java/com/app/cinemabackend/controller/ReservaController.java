@@ -7,7 +7,6 @@ import com.app.cinemabackend.service.ReservaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservas")
-@RequiredArgsConstructor
 @Tag(name = "Reservas y Pagos", description = "Endpoints para compra de boletos, pagos atómicos y boletos QR (RF07, RF08)")
 public class ReservaController {
 
     private final ReservaService reservaService;
+
+    public ReservaController(ReservaService reservaService) {
+        this.reservaService = reservaService;
+    }
 
     @PostMapping
     @Operation(summary = "Procesar pago y confirmar reserva generando boleto electrónico y código QR único (RF07, RF08)")

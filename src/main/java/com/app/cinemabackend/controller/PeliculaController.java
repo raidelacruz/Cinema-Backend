@@ -7,7 +7,6 @@ import com.app.cinemabackend.service.PeliculaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/peliculas")
-@RequiredArgsConstructor
 @Tag(name = "Películas", description = "Endpoints para el catálogo de películas y cartelera (RF03)")
 public class PeliculaController {
 
     private final PeliculaService peliculaService;
+
+    public PeliculaController(PeliculaService peliculaService) {
+        this.peliculaService = peliculaService;
+    }
 
     @GetMapping
     @Operation(summary = "Listar todas las películas de la cartelera activa")

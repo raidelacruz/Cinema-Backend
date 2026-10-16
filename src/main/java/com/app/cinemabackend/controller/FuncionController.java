@@ -10,7 +10,6 @@ import com.app.cinemabackend.service.FuncionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +18,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/funciones")
-@RequiredArgsConstructor
 @Tag(name = "Funciones y Butacas", description = "Endpoints para horarios, mapa de asientos y concurrencia (RF04, RF05)")
 public class FuncionController {
 
     private final FuncionService funcionService;
+
+    public FuncionController(FuncionService funcionService) {
+        this.funcionService = funcionService;
+    }
 
     @GetMapping("/pelicula/{idPelicula}")
     @Operation(summary = "Consultar horarios disponibles para una película específica")

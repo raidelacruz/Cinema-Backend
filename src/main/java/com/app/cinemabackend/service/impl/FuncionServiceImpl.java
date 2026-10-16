@@ -10,7 +10,6 @@ import com.app.cinemabackend.exception.ConflictException;
 import com.app.cinemabackend.exception.ResourceNotFoundException;
 import com.app.cinemabackend.repository.*;
 import com.app.cinemabackend.service.FuncionService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class FuncionServiceImpl implements FuncionService {
 
     private static final int TIMEOUT_MINUTOS = 5;
@@ -31,6 +29,18 @@ public class FuncionServiceImpl implements FuncionService {
     private final SalaRepository salaRepository;
     private final ButacaRepository butacaRepository;
     private final FuncionButacaRepository funcionButacaRepository;
+
+    public FuncionServiceImpl(FuncionHorarioRepository funcionHorarioRepository,
+                              PeliculaRepository peliculaRepository,
+                              SalaRepository salaRepository,
+                              ButacaRepository butacaRepository,
+                              FuncionButacaRepository funcionButacaRepository) {
+        this.funcionHorarioRepository = funcionHorarioRepository;
+        this.peliculaRepository = peliculaRepository;
+        this.salaRepository = salaRepository;
+        this.butacaRepository = butacaRepository;
+        this.funcionButacaRepository = funcionButacaRepository;
+    }
 
     @Override
     @Transactional(readOnly = true)

@@ -4,7 +4,6 @@ import com.app.cinemabackend.dto.response.DulceriaDTO;
 import com.app.cinemabackend.entity.DulceriaProducto;
 import com.app.cinemabackend.repository.DulceriaProductoRepository;
 import com.app.cinemabackend.service.DulceriaService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +13,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class DulceriaServiceImpl implements DulceriaService {
 
     private final DulceriaProductoRepository dulceriaProductoRepository;
+
+    public DulceriaServiceImpl(DulceriaProductoRepository dulceriaProductoRepository) {
+        this.dulceriaProductoRepository = dulceriaProductoRepository;
+    }
 
     @Override
     @Transactional(readOnly = true)
