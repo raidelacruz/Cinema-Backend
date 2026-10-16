@@ -22,21 +22,19 @@ public class DulceriaServiceImpl implements DulceriaService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<DulceriaDTO> obtenerCatalogo() {
         try {
             List<DulceriaProducto> productos = dulceriaProductoRepository.findByDisponibleTrue();
             if (!productos.isEmpty()) {
                 return productos.stream().map(this::mapToDTO).collect(Collectors.toList());
             }
-        } catch (Exception ignored) {
-            // Fallback si la tabla aun no ha sido creada en la base de datos
+        } catch (Throwable ignored) {
+            // Fallback si la tabla aun no ha sido creada o la conexion no esta disponible
         }
         return obtenerCatalogoMock();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<DulceriaDTO> obtenerPorCategoria(String categoria) {
         return obtenerCatalogo().stream()
                 .filter(d -> d.getCategoria().equalsIgnoreCase(categoria))
