@@ -72,4 +72,21 @@ public class FuncionController {
         funcionService.liberarButacas(id, butacaIds);
         return ResponseEntity.ok(ApiResponse.ok(null, "Butacas liberadas exitosamente"));
     }
+
+    // actualizar y eliminar funciones (solo para administradores)
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar una función existente (Admin)")
+    public ResponseEntity<ApiResponse<FuncionHorarioDTO>> actualizarFuncion(
+            @PathVariable("id") Long id,
+            @RequestBody FuncionHorarioRequestDTO dto) {
+        FuncionHorarioDTO actualizada = funcionService.actualizarFuncion(id, dto);
+        return ResponseEntity.ok(ApiResponse.ok(actualizada, "Función actualizada exitosamente"));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar una función sin reservas vendidas (Admin)")
+    public ResponseEntity<ApiResponse<Void>> eliminarFuncion(@PathVariable("id") Long id) {
+        funcionService.eliminarFuncion(id);
+        return ResponseEntity.ok(ApiResponse.ok(null, "Función eliminada exitosamente"));
+    }
 }

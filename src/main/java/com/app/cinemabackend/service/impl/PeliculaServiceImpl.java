@@ -112,8 +112,7 @@ public class PeliculaServiceImpl implements PeliculaService {
         Pelicula pelicula = peliculaRepository.findById(idPelicula)
                 .orElseThrow(() -> new ResourceNotFoundException("Película no encontrada con ID: " + idPelicula));
         // Soft delete / cambio de estado a INACTIVO para preservar integridad referencial
-        pelicula.setEstado("INACTIVO");
-        peliculaRepository.save(pelicula);
+        peliculaRepository.delete(pelicula);
     }
 
     private PeliculaDTO mapToDTO(Pelicula p) {
