@@ -67,11 +67,27 @@ public class FuncionServiceImpl implements FuncionService {
         Sala sala = salaRepository.findById(dto.getIdSala())
                 .orElseThrow(() -> new ResourceNotFoundException("Sala no encontrada con ID: " + dto.getIdSala()));
 
+        int duracion = pelicula.getDuracionMinutos() != null ? pelicula.getDuracionMinutos() : 120;
+        OffsetDateTime inicio = dto.getFechaHoraInicio();
+        OffsetDateTime fin = dto.getFechaHoraFin() != null ? dto.getFechaHoraFin() : inicio.plusMinutes(duracion);
+
+        // Validar cruce de horarios en la misma sala
+        List<FuncionHorario> cruces = funcionHorarioRepository.findFuncionesSolapadas(sala.getIdSala(), inicio, fin);
+        if (!cruces.isEmpty()) {
+            FuncionHorario existente = cruces.get(0);
+            throw new ConflictException(
+                    "Cruce de horario en " + sala.getNombreNumero() +
+                    ": ya está programada '" + existente.getPelicula().getTitulo() +
+                    "' hasta las " + existente.getFechaHoraFin().toLocalTime() +
+                    ". Elige otra hora o sala."
+            );
+        }
+
         FuncionHorario funcion = FuncionHorario.builder()
                 .pelicula(pelicula)
                 .sala(sala)
-                .fechaHoraInicio(dto.getFechaHoraInicio())
-                .fechaHoraFin(dto.getFechaHoraFin() != null ? dto.getFechaHoraFin() : dto.getFechaHoraInicio().plusMinutes(pelicula.getDuracionMinutos() != null ? pelicula.getDuracionMinutos() : 120))
+                .fechaHoraInicio(inicio)
+                .fechaHoraFin(fin)
                 .formato(dto.getFormato() != null ? dto.getFormato().toUpperCase() : "2D")
                 .version(dto.getVersion() != null ? dto.getVersion().toUpperCase() : "DOBLADA")
                 .precioBase(dto.getPrecioBase())
@@ -80,7 +96,7 @@ public class FuncionServiceImpl implements FuncionService {
 
         FuncionHorario guardada = funcionHorarioRepository.save(funcion);
 
-        // Inicializar todas las butacas fisicas de la sala para esta funcion
+        // Inicializar todas las butacas físicas de la sala para esta función
         List<Butaca> butacasSala = butacaRepository.findBySalaIdSalaOrderByFilaAscNumeroAsc(sala.getIdSala());
         List<FuncionButaca> funcionButacas = butacasSala.stream()
                 .map(b -> FuncionButaca.builder()
@@ -99,12 +115,80 @@ public class FuncionServiceImpl implements FuncionService {
 
     @Override
     @Transactional
+    public FuncionHorarioDTO actualizarFuncion(Long idFuncion, FuncionHorarioRequestDTO dto) {
+        FuncionHorario funcion = funcionHorarioRepository.findById(idFuncion)
+                .orElseThrow(() -> new ResourceNotFoundException("Función no encontrada con ID: " + idFuncion));
+
+        if (dto.getIdPelicula() != null) {
+            Pelicula pelicula = peliculaRepository.findById(dto.getIdPelicula())
+                    .orElseThrow(() -> new ResourceNotFoundException("Película no encontrada con ID: " + dto.getIdPelicula()));
+            funcion.setPelicula(pelicula);
+        }
+
+        if (dto.getIdSala() != null) {
+            Sala sala = salaRepository.findById(dto.getIdSala())
+                    .orElseThrow(() -> new ResourceNotFoundException("Sala no encontrada con ID: " + dto.getIdSala()));
+            funcion.setSala(sala);
+        }
+
+        OffsetDateTime inicio = dto.getFechaHoraInicio() != null ? dto.getFechaHoraInicio() : funcion.getFechaHoraInicio();
+        int duracion = funcion.getPelicula().getDuracionMinutos() != null ? funcion.getPelicula().getDuracionMinutos() : 120;
+        OffsetDateTime fin = dto.getFechaHoraFin() != null ? dto.getFechaHoraFin() : inicio.plusMinutes(duracion);
+
+        // Validar cruce de horarios excluyendo esta misma función
+        List<FuncionHorario> cruces = funcionHorarioRepository
+                .findFuncionesSolapadas(funcion.getSala().getIdSala(), inicio, fin)
+                .stream()
+                .filter(f -> !f.getIdFuncion().equals(idFuncion))
+                .collect(Collectors.toList());
+
+        if (!cruces.isEmpty()) {
+            FuncionHorario existente = cruces.get(0);
+            throw new ConflictException(
+                    "Cruce de horario en " + funcion.getSala().getNombreNumero() +
+                    ": ya está programada '" + existente.getPelicula().getTitulo() +
+                    "' hasta las " + existente.getFechaHoraFin().toLocalTime() +
+                    ". Elige otra hora o sala."
+            );
+        }
+
+        funcion.setFechaHoraInicio(inicio);
+        funcion.setFechaHoraFin(fin);
+        if (dto.getFormato() != null) funcion.setFormato(dto.getFormato().toUpperCase());
+        if (dto.getVersion() != null) funcion.setVersion(dto.getVersion().toUpperCase());
+        if (dto.getPrecioBase() != null) funcion.setPrecioBase(dto.getPrecioBase());
+        if (dto.getEstado() != null) funcion.setEstado(dto.getEstado().toUpperCase());
+
+        FuncionHorario actualizada = funcionHorarioRepository.save(funcion);
+        return mapFuncionToDTO(actualizada);
+    }
+
+    @Override
+    @Transactional
+    public void eliminarFuncion(Long idFuncion) {
+        FuncionHorario funcion = funcionHorarioRepository.findById(idFuncion)
+                .orElseThrow(() -> new ResourceNotFoundException("Función no encontrada con ID: " + idFuncion));
+
+        List<FuncionButaca> butacas = funcionButacaRepository.findByFuncionHorarioIdFuncionConDetalleButaca(idFuncion);
+        boolean tieneOcupadas = butacas.stream()
+                .anyMatch(fb -> "OCUPADA".equalsIgnoreCase(fb.getEstadoDisponibilidad()));
+
+        if (tieneOcupadas) {
+            throw new ConflictException("No se puede eliminar la función porque ya tiene butacas vendidas.");
+        }
+
+        funcionButacaRepository.deleteAll(butacas);
+        funcionHorarioRepository.delete(funcion);
+    }
+
+    @Override
+    @Transactional
     public List<FuncionButacaDTO> obtenerMapaButacas(Long idFuncion) {
         if (!funcionHorarioRepository.existsById(idFuncion)) {
             throw new ResourceNotFoundException("Función no encontrada con ID: " + idFuncion);
         }
 
-        // 1. Liberar automaticamente las butacas cuyo bloqueo de 5 min ya expiro
+        // 1. Liberar automáticamente las butacas cuyo bloqueo de 5 min ya expiró
         funcionButacaRepository.liberarButacasExpiradas(OffsetDateTime.now());
 
         // 2. Consultar el estado actualizado de la sala
@@ -138,7 +222,6 @@ public class FuncionServiceImpl implements FuncionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Función no encontrada con ID: " + dto.getIdFuncion()));
 
         OffsetDateTime ahora = OffsetDateTime.now();
-        // Liberar butacas expiradas para tener el estado mas fresco
         funcionButacaRepository.liberarButacasExpiradas(ahora);
 
         List<FuncionButaca> butacasSolicitadas = funcionButacaRepository.findByFuncionAndButacaIds(
@@ -164,7 +247,6 @@ public class FuncionServiceImpl implements FuncionService {
                         fb.getButaca().getFila(), fb.getButaca().getNumero()));
             }
 
-            // Aplicar bloqueo temporal de 5 minutos
             fb.setEstadoDisponibilidad("BLOQUEADA");
             fb.setBloqueadoHasta(nuevoBloqueadoHasta);
             bloqueadasExitosas.add(fb.getButaca().getIdButaca());

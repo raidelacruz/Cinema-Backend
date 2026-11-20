@@ -71,7 +71,7 @@ public class PeliculaController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Dar de baja una película (cambiar estado a INACTIVO)")
+    @Operation(summary = "Dar de baja una película (cambiar estado a INACTIVA)")
     public ResponseEntity<ApiResponse<Void>> eliminarPelicula(@PathVariable("id") Long id) {
         peliculaService.eliminarPelicula(id);
         return ResponseEntity.ok(ApiResponse.ok(null, "Película dada de baja exitosamente"));

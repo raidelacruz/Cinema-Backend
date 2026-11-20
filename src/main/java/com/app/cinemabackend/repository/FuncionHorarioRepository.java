@@ -16,11 +16,17 @@ public interface FuncionHorarioRepository extends JpaRepository<FuncionHorario, 
 
     List<FuncionHorario> findByPeliculaIdPeliculaAndEstadoOrderByFechaHoraInicioAsc(Long idPelicula, String estado);
 
-    @Query("SELECT f FROM FuncionHorario f WHERE f.pelicula.idPelicula = :idPelicula " +
-           "AND f.fechaHoraInicio >= :desde AND f.fechaHoraInicio <= :hasta " +
-           "ORDER BY f.fechaHoraInicio ASC")
-    List<FuncionHorario> findFuncionesPorRangoFecha(
-            @Param("idPelicula") Long idPelicula,
-            @Param("desde") OffsetDateTime desde,
-            @Param("hasta") OffsetDateTime hasta);
+    @Query("""
+    SELECT f FROM FuncionHorario f
+    WHERE f.sala.idSala = :idSala
+      AND f.estado <> 'CANCELADA'
+      AND f.fechaHoraInicio < :fechaFin
+      AND f.fechaHoraFin > :fechaInicio
+""")
+List<FuncionHorario> findFuncionesSolapadas(
+        @Param("idSala") Long idSala,
+        @Param("fechaInicio") OffsetDateTime fechaInicio,
+        @Param("fechaFin") OffsetDateTime fechaFin
+);
+
 }

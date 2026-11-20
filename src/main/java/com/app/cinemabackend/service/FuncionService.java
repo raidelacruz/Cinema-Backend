@@ -16,6 +16,9 @@ public interface FuncionService {
 
     FuncionHorarioDTO crearFuncion(FuncionHorarioRequestDTO dto);
 
+    FuncionHorarioDTO actualizarFuncion(Long idFuncion, FuncionHorarioRequestDTO dto);
+    void eliminarFuncion(Long idFuncion);
+
     List<FuncionButacaDTO> obtenerMapaButacas(Long idFuncion);
 
     BloqueoResponseDTO bloquearButacas(BloquearButacasRequestDTO dto);
